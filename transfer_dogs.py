@@ -11,11 +11,12 @@ from keras.applications.mobilenet import preprocess_input
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Model
 from keras.optimizers import Adam
-
+import datetime
+now = datetime.datetime.now()
 base_model = MobileNet(weights='imagenet',
                        include_top=False)  # imports the mobilenet model and discards the last 1000 neuron layer.
 
-num_classes = 33
+num_classes = 120
 
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
@@ -43,7 +44,7 @@ for layer in model.layers[87:]:
 
 train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)  # included in our dependencies
 
-train_generator = train_datagen.flow_from_directory('/home/fshaw/Documents/fish/split/test',
+train_generator = train_datagen.flow_from_directory('/home/fshaw/Documents/dogs/split/test',
                                                     target_size=(224, 224),
                                                     color_mode='rgb',
                                                     batch_size=32,
@@ -58,3 +59,5 @@ step_size_train = train_generator.n // train_generator.batch_size
 model.fit_generator(generator=train_generator,
                     steps_per_epoch=step_size_train,
                     epochs=15)
+now = datetime.datetime.now() - now
+print(now)
