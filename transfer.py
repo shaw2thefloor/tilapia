@@ -15,7 +15,7 @@ from keras.optimizers import Adam
 base_model = MobileNet(weights='imagenet',
                        include_top=False)  # imports the mobilenet model and discards the last 1000 neuron layer.
 
-num_classes = 33
+num_classes = 5
 
 x = base_model.output
 x = GlobalAveragePooling2D()(x)
@@ -49,12 +49,14 @@ train_generator = train_datagen.flow_from_directory('/home/fshaw/Documents/fish/
                                                     batch_size=32,
                                                     class_mode='categorical',
                                                     shuffle=True)
-model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer='Nadam', loss='categorical_crossentropy', metrics=['accuracy'])
 # Adam optimizer
 # loss function will be categorical cross entropy
 # evaluation metric will be accuracy
-
+print("Beginning Training")
 step_size_train = train_generator.n // train_generator.batch_size
 model.fit_generator(generator=train_generator,
                     steps_per_epoch=step_size_train,
                     epochs=15)
+print("Saving Model")
+model.save("./trained_model.h5", overwrite=True, include_optimizer=True)
