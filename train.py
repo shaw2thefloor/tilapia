@@ -17,16 +17,14 @@ from keras import optimizers
 #                                                  input_shape=None, pooling='max')
 base_model = keras.applications.vgg19.VGG19(include_top=False, weights='imagenet', input_tensor=None, input_shape=None,
                                             pooling='max')
-num_classes = 23
+num_classes = 30
 '''
 x = base_model.output
 #x = GlobalAveragePooling2D()(x)
 x = Dense(1024, activation='relu')(
     x)  # we add dense layers so that the model can learn more complex functions and classify for better results.
 x = Dense(512, activation='relu')(x)  # dense layer 2
-
 preds = Dense(num_classes, activation='softmax')(x)  # final layer with softmax activation
-
 model = Model(inputs=x, outputs=preds)
 # specify the inputs
 # specify the outputs
@@ -58,18 +56,19 @@ train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)  # i
 train_generator = train_datagen.flow_from_directory('/home/fshaw/Documents/fish/images/split/train',
                                                     target_size=(299, 299),
                                                     color_mode='rgb',
-                                                    batch_size=32,
+                                                    batch_size=10,
                                                     class_mode='categorical',
                                                     shuffle=True)
 val_generator = train_datagen.flow_from_directory('/home/fshaw/Documents/fish/images/split/test',
                                                   target_size=(299, 299),
                                                   color_mode='rgb',
-                                                  batch_size=11,
+                                                  batch_size=10,
                                                   class_mode='categorical',
                                                   shuffle=True)
 
 op = optimizers.SGD(lr=0.1, momentum=0.1, decay=0.01, nesterov=False)
-model.compile(optimizer='Adam', loss='poisson', metrics=['accuracy'])
+adam = optimizers.Adam(lr=0.00001)
+model.compile(optimizer=adam, loss='poisson', metrics=['accuracy'])
 # Adam optimizer
 # loss function will be categorical cross entropy
 # evaluation metric will be accuracy
@@ -78,7 +77,7 @@ step_size_train = train_generator.n // train_generator.batch_size
 validation_steps = val_generator.n // val_generator.batch_size
 model.fit_generator(generator=train_generator,
                     steps_per_epoch=step_size_train,
-                    epochs=100,
+                    epochs=1000,
                     validation_data=val_generator,
                     validation_steps=validation_steps,
                     )

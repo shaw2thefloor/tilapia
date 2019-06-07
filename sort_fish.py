@@ -65,10 +65,17 @@ with open("log.txt", "w+") as log:
     for path, dirs, files in os.walk(by_species_dir):
         for dir in dirs:
             for s_path, s_dirs, s_files in os.walk(os.path.join(path, dir)):
-                if len(s_files) > 0:
+
+                if s_path.endswith("Not Given") or s_path.endswith("Hybrid"):
                     pass
+                    #shutil.rmtree(os.path.join(path, dir))
+                elif len(s_files) > 10:
+                    pass
+
                 else:
-                    shutil.rmtree(os.path.join(path, dir))
+                    pass
+                    #shutil.rmtree(os.path.join(path, dir))
+
 
     # for each dir in input get n files and put in test, then put the rest in training
     for idx, dir in enumerate(os.walk(by_species_dir)):
