@@ -11,6 +11,7 @@ shutil.rmtree(output_dir, ignore_errors=True)
 os.makedirs(output_dir)
 
 
+
 # x is target size
 x = 500
 
@@ -18,6 +19,7 @@ out = open("log.txt", "w+")
 for root, dirs, files in os.walk(input_dir):
     count = 0
     for file in files:
+        print(file)
         if not file.startswith("."):
             print(file)
             im = Image.open(input_dir / file)
