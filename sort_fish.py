@@ -1,24 +1,25 @@
 # Created by fshaw at 06/03/2019
 # split data out into species based on the spreadsheet of species and image id, then split further into test and
 # training data
-
+from pathlib import Path
 import pandas as pd
 import os, shutil, math, random
 
 # Assign spreadsheet filename to `file`
-file = '/home/fshaw/Documents/fish/Oreochromis_sequencing_summary_31Jul18_wrangled.xlsx'
+proj_dir = Path('C:/Users/fshaw/OneDrive - Norwich BioScience Institutes/PycharmProjects/dev/tilapia_dev/transfer_learning)
+data = proj_dir / "data"
+ss_file = data / "Oreochromis_sequencing_summary_31Jul18_wrangled.xlsx"
 
 # Load spreadsheet
-xl = pd.ExcelFile(file)
+xl = pd.ExcelFile(ss_file)
 
-original_images = "/home/fshaw/Documents/fish/images/small_images"
-by_species_dir = "/home/fshaw/Documents/fish/images/split/all"
+original_images = Path("C:/Users/fshaw/OneDrive - Norwich BioScience Institutes/FishImages/fish/images/small_images")
+by_species_dir = Path("C:/Users/fshaw/OneDrive - Norwich BioScience Institutes/FishImages/fish/images/split/all")
 
 # create train and test dirs in split
-model_data = "/home/fshaw/Documents/fish/images/split/"
-train = os.path.join(model_data, 'train')
-test = os.path.join(model_data, 'test')
-
+model_data = Path("C:/Users/fshaw/OneDrive - Norwich BioScience Institutes/FishImages/fish/images/split/")
+train = model_data / 'train'
+test = model_data / 'test' 
 # Load a sheet into a DataFrame by name: df1
 df1 = xl.parse('All_Samples')
 

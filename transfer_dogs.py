@@ -16,7 +16,7 @@ now = datetime.datetime.now()
 base_model = MobileNet(weights='imagenet',
                        include_top=False)  # imports the mobilenet model and discards the last 1000 neuron layer.
 
-num_classes = 120
+num_classes = 119
 
 x = base_model.output
 x = GlobalAveragePooling2D()(x)

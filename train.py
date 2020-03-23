@@ -51,7 +51,7 @@ print(model.summary())
 train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input, rotation_range=20, zoom_range=0.15,
                                    width_shift_range=0.2, height_shift_range=0.2, shear_range=0.15,
                                    horizontal_flip=True, fill_mode="nearest")  # included in our dependencies
-train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)  # included in our dependencies
+#train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)  # included in our dependencies
 
 train_generator = train_datagen.flow_from_directory('/home/fshaw/Documents/fish/images/split/train',
                                                     target_size=(299, 299),
