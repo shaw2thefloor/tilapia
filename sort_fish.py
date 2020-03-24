@@ -6,7 +6,8 @@ import pandas as pd
 import os, shutil, math, random
 
 # Assign spreadsheet filename to `file`
-proj_dir = Path('C:/Users/fshaw/OneDrive - Norwich BioScience Institutes/PycharmProjects/dev/tilapia_dev/transfer_learning)
+proj_dir = Path('C:/Users/fshaw/OneDrive - Norwich BioScience '
+                'Institutes/PycharmProjects/dev/tilapia/')
 data = proj_dir / "data"
 ss_file = data / "Oreochromis_sequencing_summary_31Jul18_wrangled.xlsx"
 

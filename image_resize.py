@@ -4,7 +4,7 @@ from PIL import Image, ImageFilter
 from pathlib import Path
 
 
-images_path = Path("C:/Users/shaw/OneDrive - Norwich BioScience Institutes/dev/tilapia/data/images")
+images_path = Path("C:/Users/fshaw/OneDrive - Norwich BioScience Institutes/dev/tilapia/data/images")
 input_dir = images_path / "original_images"
 output_dir = images_path / "small_images"
 shutil.rmtree(output_dir, ignore_errors=True)
