@@ -11,13 +11,14 @@ from keras.applications.mobilenet import preprocess_input
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Model
 from keras import optimizers
+from pathlib import Path
 
 # base_model = MobileNet(weights='imagenet',include_top=False)  # imports the mobilenet model and discards the last 1000 neuron layer.
 # base_model = keras.applications.xception.Xception(include_top=False, weights='imagenet', input_tensor=None,
 #                                                  input_shape=None, pooling='max')
 base_model = keras.applications.vgg19.VGG19(include_top=False, weights='imagenet', input_tensor=None, input_shape=None,
                                             pooling='max')
-num_classes = 30
+num_classes = 37
 '''
 x = base_model.output
 #x = GlobalAveragePooling2D()(x)
@@ -32,8 +33,7 @@ model = Model(inputs=x, outputs=preds)
 '''
 # Top Model Block
 x = base_model.output
-x = Dense(512, activation='relu')(
-    x)  # we add dense layers so that the model can learn more complex functions and classify for better results.
+x = Dense(512, activation='relu')(x)  # we add dense layers so that the model can learn more complex functions and classify for better results.
 x = Dense(512, activation='relu')(x)  # dense layer 2
 x = Dense(512, activation='relu')(x)  # dense layer 2
 # x = GlobalAveragePooling2D()(x)
@@ -53,13 +53,16 @@ train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input, rota
                                    horizontal_flip=True, fill_mode="nearest")  # included in our dependencies
 #train_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)  # included in our dependencies
 
-train_generator = train_datagen.flow_from_directory('/home/fshaw/Documents/fish/images/split/train',
+proj_dir = Path('C:/Users/fshaw/OneDrive - Norwich BioScience '
+                'Institutes/dev/tilapia/data/images/split/')
+
+train_generator = train_datagen.flow_from_directory(proj_dir / "train",
                                                     target_size=(299, 299),
                                                     color_mode='rgb',
                                                     batch_size=10,
                                                     class_mode='categorical',
                                                     shuffle=True)
-val_generator = train_datagen.flow_from_directory('/home/fshaw/Documents/fish/images/split/test',
+val_generator = train_datagen.flow_from_directory(proj_dir / "test",
                                                   target_size=(299, 299),
                                                   color_mode='rgb',
                                                   batch_size=10,
