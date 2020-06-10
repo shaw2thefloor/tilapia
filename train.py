@@ -98,7 +98,7 @@ for dir in os.listdir(proj_dir):
     validation_steps = val_generator.n // val_generator.batch_size
     history = model.fit_generator(generator=train_generator,
                         steps_per_epoch=step_size_train,
-                        epochs=1,
+                        epochs=60,
                         validation_data=val_generator,
                         validation_steps=validation_steps,
 
