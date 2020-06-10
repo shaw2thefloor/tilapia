@@ -1,0 +1,3 @@
+To run, open sort_fish.py and setup correct paths for you machine.
+Run sort fish, this will create cross-folded test/train sets
+Run train.py, which will train a classifier on each fold and output the accuracies for each.

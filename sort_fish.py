@@ -3,18 +3,30 @@
 # training data
 from pathlib import Path
 import pandas as pd
-import os, shutil, math, random
+import os, shutil, math, random, stat
+
+num_splits = 20
+
+def on_rm_error( func, path, exc_info):
+    # path contains the path of the file that couldn't be removed
+    # let's just assume that it's read-only and unlink it.
+    try:
+        os.chmod( path, stat.S_IWRITE )
+        os.unlink( path )
+    except FileNotFoundError as f:
+        print(f)
+
 
 # Assign spreadsheet filename to `file`
-proj_dir = Path('C:/Users/fshaw/OneDrive - Norwich BioScience '
-                'Institutes/dev/tilapia/')
+proj_dir = Path('C:/Users/fshaw/Documents/PycharmProjects/tilapia/')
 data = proj_dir / "data"
 ss_file = data / "Oreochromis_sequencing_summary_31Jul18_wrangled.xlsx"
-images = data / "images"
+images = data / "image_data"
+raw = data / "raw"
 # Load spreadsheet
 xl = pd.ExcelFile(ss_file)
 
-original_images = images / "small_images"
+original_images = raw / "small_images"
 by_species_dir = images / "split" / "all"
 
 # create train and test dirs in split
@@ -29,13 +41,14 @@ unique = df1["FieldID/phenotype"].unique()
 
 try:
     # delete and recreate dirs
-    shutil.rmtree(by_species_dir, ignore_errors=True)
-    shutil.rmtree(model_data, ignore_errors=True)
-    os.makedirs(by_species_dir)
-    os.makedirs(train)
-    os.makedirs(test)
+    os.chmod(by_species_dir, 0o777)
 except OSError as e:
     print("error making directories: " + str(e))
+
+shutil.rmtree(by_species_dir, onerror=on_rm_error)
+
+os.makedirs(by_species_dir)
+
 
 dir_count = 0
 for dir_name in unique:
@@ -64,44 +77,56 @@ log = open("log.txt", "w+")
 log.write(str(copy_count) + " files copied into " + str(dir_count) + " directories")
 log.close()
 
-# now iterate directories and delete those which have no images in them
-for path, dirs, files in os.walk(by_species_dir):
-    for dir in dirs:
-        for s_path, s_dirs, s_files in os.walk(os.path.join(path, dir)):
 
-            if s_path.endswith("Not Given") or s_path.endswith("Hybrid"):
-                pass
-                #shutil.rmtree(os.path.join(path, dir))
-            elif len(s_files) > 10:
-                pass
+
+
+for n in range(0, num_splits):
+    print("fold: " + str(n))
+    fold_dir = model_data / str(n)
+    try:
+        shutil.rmtree(fold_dir)
+    except:
+        pass
+    # for each dir in input get n files and put in test, then put the rest in training
+    for dir in os.listdir(by_species_dir):
+
+        # choose m random indexes from the n species images where m = 1/3 * n
+        file_list = os.listdir(by_species_dir / dir)
+        num_img = len(file_list)
+        ratio_of_test_data = 1 / 3
+        num_idx = math.floor(num_img * ratio_of_test_data)
+        test_idxs = list()
+        ran = 0
+
+        # loop to generate <num_idx> non-duplicated random integers in the interval [0, num_images]
+        while len(test_idxs) < (num_idx):
+            i = random.randint(0, num_img - 1)
+            if i not in test_idxs:
+                test_idxs.append(i)
+
+
+        test_dir = model_data / str(n) / "test" / dir
+        train_dir = model_data / str(n) / "train" / dir
+        os.makedirs(test_dir)
+        os.makedirs(train_dir)
+        count = 0
+        for f in file_list:
+
+            if count in test_idxs:
+                shutil.copy2(by_species_dir / dir / f, test_dir / f)
 
             else:
-                pass
-                #shutil.rmtree(os.path.join(path, dir))
+                shutil.copy2(by_species_dir / dir / f, train_dir / f)
+
+            count = count + 1
 
 
-# for each dir in input get n files and put in test, then put the rest in training
-for idx, dir in enumerate(os.walk(by_species_dir)):
+'''
+    # now iterate directories and delete those which have no images in them
+    for path, dirs, files in os.walk(by_species_dir):
+        for dir in dirs:
+            for s_path, s_dirs, s_files in os.walk(os.path.join(path, dir)):
 
-    # get dir name
-    temp_dir_name = dir[0]
-    out_test_name = temp_dir_name.replace('all', 'test')
-    out_train_name = temp_dir_name.replace('all', 'train')
-    shutil.rmtree(out_test_name, ignore_errors=True)
-    shutil.rmtree(out_train_name, ignore_errors=True)
-    os.mkdir(out_test_name)
-    os.mkdir(out_train_name)
-
-    # choose m random indexes from the n species images where m = 1/3 * n
-    num_img = len(dir[2])
-    ratio_of_test_data = 1 / 3
-    num_idx = math.floor(num_img * ratio_of_test_data)
-    test_idxs = list()
-    for i in range(0, num_idx - 1):
-        test_idxs.append(random.randint(0, num_img - 1))
-
-    for idx_1, f in enumerate(dir[2]):
-        if idx_1 in test_idxs:
-            shutil.copyfile(os.path.join(dir[0], f), os.path.join(out_test_name, f))
-        else:
-            shutil.copyfile(os.path.join(dir[0], f), os.path.join(out_train_name, f))
+                if len(s_files) < 2:
+                    shutil.rmtree(os.path.join(path, dir))
+                    '''

@@ -9,6 +9,7 @@ trained_model.h5
 
 # Keras Models
 *.h5
+accuracies.txt
 
 # Distribution / packaging
 .Python

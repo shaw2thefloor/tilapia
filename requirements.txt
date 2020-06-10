@@ -1,3 +1,4 @@
+scikit-learn
 absl-py==0.7.1
 astor==0.7.1
 cycler==0.10.0
