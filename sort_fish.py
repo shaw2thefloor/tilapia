@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import os, shutil, math, random, stat
 
-num_splits = 20
+num_splits = 10
 
 def on_rm_error( func, path, exc_info):
     # path contains the path of the file that couldn't be removed
@@ -77,8 +77,13 @@ log = open("log.txt", "w+")
 log.write(str(copy_count) + " files copied into " + str(dir_count) + " directories")
 log.close()
 
+# now iterate directories and delete those which have no images in them
+for path, dirs, files in os.walk(by_species_dir):
+    for dir in dirs:
+        for s_path, s_dirs, s_files in os.walk(os.path.join(path, dir)):
 
-
+            if len(s_files) < 10:
+                shutil.rmtree(os.path.join(path, dir))
 
 for n in range(0, num_splits):
     print("fold: " + str(n))
@@ -121,12 +126,4 @@ for n in range(0, num_splits):
             count = count + 1
 
 
-'''
-    # now iterate directories and delete those which have no images in them
-    for path, dirs, files in os.walk(by_species_dir):
-        for dir in dirs:
-            for s_path, s_dirs, s_files in os.walk(os.path.join(path, dir)):
 
-                if len(s_files) < 2:
-                    shutil.rmtree(os.path.join(path, dir))
-                    '''
