@@ -29,12 +29,12 @@ model = Model(inputs=x, outputs=preds)
 '''
 # Top Model Block
 x = base_model.output
-x = Dense(256, activation='relu')(x)
+x = Dense(512, activation='relu')(x)
 # x = GlobalAveragePooling2D()(x)
-x = Dense(256, activation='relu')(x)
+x = Dense(512, activation='relu')(x)
 # x = GlobalAveragePooling2D()(x)
-x = Dense(256, activation='relu')(x)
-# x = GlobalAveragePooling2D()(x)
+x = Dense(512, activation='relu')(x)
+
 
 # x = GlobalAveragePooling2D()(x)
 predictions = Dense(num_classes, activation='softmax')(x)
@@ -94,10 +94,10 @@ step_size_train = train_generator.n // train_generator.batch_size
 validation_steps = val_generator.n // val_generator.batch_size
 history = model.fit_generator(generator=train_generator,
                               steps_per_epoch=step_size_train,
-                              epochs=100,
+                              epochs=200,
                               validation_data=val_generator,
                               validation_steps=validation_steps,
-
+                              verbose=2
                               )
 
 print(history.history)

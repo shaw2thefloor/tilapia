@@ -98,7 +98,7 @@ for n in range(0, num_splits):
         # choose m random indexes from the n species images where m = 1/3 * n
         file_list = os.listdir(by_species_dir / dir)
         num_img = len(file_list)
-        ratio_of_test_data = 1 / 3
+        ratio_of_test_data = 1 / 10
         num_idx = math.floor(num_img * ratio_of_test_data)
         test_idxs = list()
         ran = 0
